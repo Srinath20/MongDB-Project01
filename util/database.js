@@ -1,0 +1,27 @@
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+
+let _db;
+
+const mongoConnect = (callback) => {
+    MongoClient.connect('mongodb+srv://srinath:srinathg99@cluster01.euqij.mongodb.net/?retryWrites=true&w=majority&appName=Cluster01')
+        .then(client => {
+            console.log("connected to cluster");
+            _db = client.db('test'); // name of database, will be created if not present.
+            callback();
+        })
+        .catch(err => {
+            console.error(err)
+            throw err;
+        });
+};
+
+const getDb = () => {
+    if (_db) {
+        return _db;
+    }
+    throw new Error('No database found!');
+}
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
