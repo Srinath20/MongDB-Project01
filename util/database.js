@@ -6,12 +6,12 @@ let _db;
 const mongoConnect = (callback) => {
     MongoClient.connect('mongodb+srv://srinath:srinathg99@cluster01.euqij.mongodb.net/?retryWrites=true&w=majority&appName=Cluster01')
         .then(client => {
-            console.log("connected to cluster");
-            _db = client.db('test'); // name of database, will be created if not present.
+            console.log('Connected!');
+            _db = client.db('test');
             callback();
         })
         .catch(err => {
-            console.error(err)
+            console.log(err);
             throw err;
         });
 };
@@ -20,8 +20,8 @@ const getDb = () => {
     if (_db) {
         return _db;
     }
-    throw new Error('No database found!');
-}
+    throw 'No database found!';
+};
 
 exports.mongoConnect = mongoConnect;
 exports.getDb = getDb;
