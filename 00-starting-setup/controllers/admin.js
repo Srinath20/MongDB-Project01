@@ -13,10 +13,9 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl);
+  const product = new Product(title, price, description, imageUrl, null, req.user._id);
   product.save()
     .then(result => {
-      // console.log(result);
       console.log('Created Product');
       res.redirect('/admin/products');
     })
@@ -46,20 +45,30 @@ exports.getEditProduct = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
-exports.postEditProduct = (req, res, next) => {
+exports.postEditProduct = async (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  console.log(req.user, " line 55");
-  const product = new Product(updatedTitle, updatedPrice, updatedDesc, updatedImageUrl, null, req.user._id);
-  return product.save()
-    .then(result => {
-      console.log('UPDATED PRODUCT!');
-      res.redirect('/admin/products');
-    })
-    .catch(err => console.log(err));
+  try {
+    const product = await Product.findById(prodId);
+    if (!product) {
+      return res.status(404).send('Product not found');
+    }
+    console.log(product);
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDesc;
+    product.imageUrl = updatedImageUrl;
+    console.log("Line 64, controller", product._id);
+    await product.save();
+
+    console.log('UPDATED PRODUCT!');
+    res.redirect('/admin/products');
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 exports.getProducts = (req, res, next) => {

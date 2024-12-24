@@ -25,7 +25,7 @@ class User {
     const db = getDb();
     return db.collection('users').find({ _id: new mongodb.ObjectId(userId) }).next()
       .then(user => {
-        //console.log(user);
+        console.log(user);
         return user;
       })
       .catch(err => { console.log(err) })

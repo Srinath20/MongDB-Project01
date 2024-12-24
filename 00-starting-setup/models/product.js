@@ -37,16 +37,22 @@ class Product {
       })
       .catch(err => { console.log(err) })
   }
-
-  static findById(prodId) {
+  static async findById(prodId) {
     const db = getDb();
-    return db.collection('products').find({ _id: new mongodb.ObjectId(prodId) }).next()
-      .then(res => {
-        console.log(res);
-        return res;
-      })
-      .catch(err => { console.log(err) })
+    const productData = await db.collection('products').findOne({ _id: new mongodb.ObjectId(prodId) });
+    if (!productData) {
+      return null;
+    }
+    return new Product(
+      productData.title,
+      productData.price,
+      productData.description,
+      productData.imageUrl,
+      productData._id,
+      productData.userId
+    );
   }
+
   static deleteById(prodId) {
     const db = getDb();
     return db.collection('products').deleteOne({ _id: new mongodb.ObjectId(prodId) })

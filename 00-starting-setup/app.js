@@ -15,6 +15,7 @@ app.use((req, res, next) => {
     .then(user => {
       if (user) {
         req.user = user;
+        console.log(req.user);
       } else {
         console.log('User not found!');
       }
