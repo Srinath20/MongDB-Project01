@@ -37,6 +37,7 @@ class Product {
       })
       .catch(err => { console.log(err) })
   }
+
   static async findById(prodId) {
     const db = getDb();
     const productData = await db.collection('products').findOne({ _id: new mongodb.ObjectId(prodId) });
@@ -52,7 +53,6 @@ class Product {
       productData.userId
     );
   }
-
   static deleteById(prodId) {
     const db = getDb();
     return db.collection('products').deleteOne({ _id: new mongodb.ObjectId(prodId) })

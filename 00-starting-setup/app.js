@@ -4,17 +4,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const user = require('./models/user');
+const User = require('./models/user');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use((req, res, next) => {
-  user.findById('676816d9e106261592215630')
-    .then(user => {
-      if (user) {
-        req.user = user;
+  User.findById('676b9b65373cd6223df15341')
+    .then(use => {
+      if (use) {
+        req.user = new User(use.name, use.email, use.cart, use._id);
         console.log(req.user);
       } else {
         console.log('User not found!');
