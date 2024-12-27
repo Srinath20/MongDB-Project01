@@ -4,18 +4,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-//const User = require('./models/user');
+const User = require('./models/user');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
-/* 
+
 app.use((req, res, next) => {
-  User.findById('676c436ec10e8e0e287d615b')
-    .then(use => {
-      if (use) {
-        req.user = new User(use.name, use.email, use.cart, use._id);
-        console.log(req.user);
+  User.findById('676e73c923792ebf5c4a6bd5')
+    .then(user => {
+      if (user) {
+        req.user = user; // the returned user object is a full mongoose object, where we can call mongoose methods on it
       } else {
         console.log('User not found!');
       }
@@ -24,7 +23,7 @@ app.use((req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-}); */
+});
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -41,7 +40,19 @@ app.use(shopRoutes);
 app.use(errorController.get404);
 
 mongoose.connect('mongodb+srv://srinath:srinathg99@cluster1.euqij.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1')
-  .then(res => {
+  .then(result => {
+    User.findOne().then(use => {
+      if (!use) {
+        const user = new User({
+          name: 'Srinath',
+          email: 'srinath@gmail.com',
+          cart: {
+            items: []
+          }
+        });
+        user.save()
+      }
+    });
     app.listen(3000);
   })
   .catch(err => {

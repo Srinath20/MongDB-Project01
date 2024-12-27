@@ -1,3 +1,30 @@
+const mongoose = require('mongoose');
+const { INTEGER } = require('sequelize');
+const schema = mongoose.Schema;
+
+const userSchema = new schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  cart: {
+    items: [{
+      productId: { type: schema.Types.ObjectId, ref: 'Product', required: true },
+      quantity: { type: Number, required: true }
+    }
+    ]
+  }
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+
 /*
 const getDb = require('../util/database').getDb;
 const mongodb = require('mongodb');
