@@ -13,8 +13,8 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product(title, price, description, imageUrl, null, req.user._id);
-  product.save()
+  const product = new Product({ title: title, price: price, ImageURL: imageUrl, description: description });
+  product.save() // save method from mongoose ODM
     .then(result => {
       console.log('Created Product');
       res.redirect('/admin/products');
@@ -51,28 +51,22 @@ exports.postEditProduct = async (req, res, next) => {
   const updatedPrice = req.body.price;
   const updatedImageUrl = req.body.imageUrl;
   const updatedDesc = req.body.description;
-  try {
-    const product = await Product.findById(prodId);
-    if (!product) {
-      return res.status(404).send('Product not found');
-    }
-    console.log(product);
+  Product.findById(prodId).then(product => {
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.description = updatedDesc;
     product.imageUrl = updatedImageUrl;
-    console.log("Line 64, controller", product._id);
-    await product.save();
-
-    console.log('UPDATED PRODUCT!');
-    res.redirect('/admin/products');
-  } catch (err) {
-    console.log(err);
-  }
+    return product.save()
+  })
+    .then(result => {
+      console.log('UPDATED PRODUCT!');
+      res.redirect('/admin/products');
+    })
+    .catch(err => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
     .then(products => {
       res.render('admin/products', {
         prods: products,
@@ -85,7 +79,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.deleteById(prodId)
+  Product.findByIdAndDelete(prodId)
     .then(() => {
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');

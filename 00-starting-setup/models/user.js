@@ -1,3 +1,4 @@
+/*
 const getDb = require('../util/database').getDb;
 const mongodb = require('mongodb');
 const { get } = require('../routes/admin');
@@ -36,7 +37,7 @@ class User {
     const db = getDb();
     return db.collection('users').updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: { cart: updatedCart } });
 
-    /* 
+    /*
         const updatedCart = {
           items: [{ productId: new mongodb.ObjectId(product._id), quantity: 1 }]
         };
@@ -45,79 +46,81 @@ class User {
           { _id: new mongodb.ObjectId(this._id) },
           { $set: { cart: updatedCart } }
         ); */
-  }
-
-  getCart() {
-    const db = getDb();
-    const productsIds = this.cart.items.map(i => {
-      return i.productId;
-    });
-    return db
-      .collection('products')
-      .find({ _id: { $in: productsIds } })
-      .toArray()
-      .then(products => {
-        return products.map(p => {
-          return {
-            ...p,
-            quantity: this.cart.items.find(i => {
-              return i.productId.toString() === p._id.toString();
-            }).quantity
-          };
-        });
+// }
+/*
+getCart() {
+  const db = getDb();
+  const productsIds = this.cart.items.map(i => {
+    return i.productId;
+  });
+  return db
+    .collection('products')
+    .find({ _id: { $in: productsIds } })
+    .toArray()
+    .then(products => {
+      return products.map(p => {
+        return {
+          ...p,
+          quantity: this.cart.items.find(i => {
+            return i.productId.toString() === p._id.toString();
+          }).quantity
+        };
       });
-  }
-
-  deleteItemFromCart(productId) {
-    const updatedCartItems = this.cart.items.filter(item => {
-      return item.productId.toString() !== productId.toString();
     });
-    const db = getDb();
-    return db.collection('users').updateOne(
-      { _id: new mongodb.ObjectId(this._id) },
-      { $set: { cart: { items: updatedCartItems } } }
-    );
-  }
+}
 
-  addOrder() {
-    const db = getDb();
-    return this.getCart().then(products => {
-      const order = {
-        items: products,
-        user: {
-          _id: new mongodb.ObjectId(this._id),
-          name: this.name
-        }
-      };
-      return db.collection('orders')
-        .insertOne(order)
-    })
-      .then(result => {
-        this.cart = { items: [] };
-        return db.collection('users')
-          .updateOne({ _id: new mongodb.ObjectId(this._id) },
-            { $set: { cart: { items: [] } } }
-          );
-      });
-  };
+deleteItemFromCart(productId) {
+  const updatedCartItems = this.cart.items.filter(item => {
+    return item.productId.toString() !== productId.toString();
+  });
+  const db = getDb();
+  return db.collection('users').updateOne(
+    { _id: new mongodb.ObjectId(this._id) },
+    { $set: { cart: { items: updatedCartItems } } }
+  );
+}
 
-
-  getOrders() {
-    const db = getDb();
+addOrder() {
+  const db = getDb();
+  return this.getCart().then(products => {
+    const order = {
+      items: products,
+      user: {
+        _id: new mongodb.ObjectId(this._id),
+        name: this.name
+      }
+    };
     return db.collection('orders')
-      .find({ 'user._id': new mongodb.ObjectId(this._id) })
-      .toArray();
-  }
+      .insertOne(order)
+  })
+    .then(result => {
+      this.cart = { items: [] };
+      return db.collection('users')
+        .updateOne({ _id: new mongodb.ObjectId(this._id) },
+          { $set: { cart: { items: [] } } }
+        );
+    });
+};
+
+
+getOrders() {
+  const db = getDb();
+  return db.collection('orders')
+    .find({ 'user._id': new mongodb.ObjectId(this._id) })
+    .toArray();
+}
 
   static findById(userId) {
-    const db = getDb();
-    return db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) })
-      .then(user => {
-        console.log(user);
-        return user;
-      })
-      .catch(err => { console.log(err) })
-  }
+  const db = getDb();
+  return db.collection('users').findOne({ _id: new mongodb.ObjectId(userId) })
+    .then(user => {
+      console.log(user);
+      return user;
+    })
+    .catch(err => { console.log(err) })
+}
 
 }
 module.exports = User;
+
+*/

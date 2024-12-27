@@ -1,15 +1,15 @@
 const path = require('path');
-const mongoConnect = require('./util/database').mongoConnect;
+const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const User = require('./models/user');
+//const User = require('./models/user');
 const app = express();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
-
+/* 
 app.use((req, res, next) => {
   User.findById('676c436ec10e8e0e287d615b')
     .then(use => {
@@ -24,7 +24,7 @@ app.use((req, res, next) => {
     .catch(err => {
       console.log(err);
     });
-});
+}); */
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -40,7 +40,11 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(3000);
-});
+mongoose.connect('mongodb+srv://srinath:srinathg99@cluster1.euqij.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1')
+  .then(res => {
+    app.listen(3000);
+  })
+  .catch(err => {
+    console.log(err);
+  })
 

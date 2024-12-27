@@ -1,4 +1,29 @@
-const getDb = require('../util/database').getDb;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+//mongoose is omitUndefined(object document model)
+const productSchema = new Schema({
+  // title:String , where its optional for user to declare value for title while creating object
+  title: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  ImageURL: {
+    type: String,
+    required: true
+  }
+})
+
+module.exports = mongoose.model('Product', productSchema); // mongoose takes model name as collection name 
+
+/* const getDb = require('../util/database').getDb;
 const mongodb = require('mongodb');
 class Product {
   constructor(title, price, description, imageUrl, id, userId) {
@@ -65,3 +90,4 @@ class Product {
   }
 }
 module.exports = Product;
+ */
